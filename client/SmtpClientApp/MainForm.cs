@@ -1,290 +1,141 @@
-using System;
-using System.Windows.Forms;
-using System;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
-using System.CodeDom;
+using System; // Importa el espacio de nombres System
+using System.Windows.Forms; // Importa el espacio de nombres System.Windows.Forms
+using System.IO; // Importa el espacio de nombres System.IO
+using System.Net; // Importa el espacio de nombres System.Net
+using System.Net.Sockets; // Importa el espacio de nombres System.Net.Sockets
+using System.Text; // Importa el espacio de nombres System.Text
+using System.Threading; // Importa el espacio de nombres System.Threading
+using System.Collections.Generic; // Importa el espacio de nombres System.Collections.Generic
+using System.Linq; // Importa el espacio de nombres System.Linq
+using System.Net.Mail; // Importa el espacio de nombres System.Net.Mail
+using System.Text.RegularExpressions; // Importa el espacio de nombres System.Text.RegularExpressions
+using System.CodeDom; // Importa el espacio de nombres System.CodeDom
+using SmtpClientApp; // Importa el espacio de nombres SmtpClientApp
 
-namespace SmtpClientApp
+namespace SmtpClientApp // Define el espacio de nombres SmtpClientApp
 {
-    
-
-    public class SendMailReturnCodes
+    public partial class MainForm : Form // Definición de la clase MainForm que hereda de Form
     {
-        public const int Success = 0;
-        public const int ConnectionError = 1;
-        public const int AuthenticationError = 2;
-        public const int SenderAddressError = 3;
-        public const int RecipientAddressError = 4;
-        public const int DataTransmissionError = 5;
-        public const int MessageBodyError = 6;
-        public const int QuitCommandError = 7;
-        public const int GenerateMimeEmailError = 8;
-    }
+        // Agrega campos privados para almacenar los valores de usuario y contraseña
+        private string username; // Almacena el nombre de usuario
+        private string password; // Almacena la contraseña
 
-    public class ClientSMTP
-    {
-        private string smtpServer;
-        private int port;
-        private string username;
-        private string password;
-        private string fromAddress;
-
-        private TextBox status;
-
-        public ClientSMTP(string smtpServer, int port, string username, string password, string fromAddress, TextBox status)
+        public MainForm(string username, string password) // Constructor de la clase MainForm
         {
-            this.smtpServer = smtpServer;
-            this.port = port;
-            this.username = username;
-            this.password = password;
-            this.fromAddress = fromAddress;
-            this.status = status;
-        }
+            InitializeComponent(); // Inicializa los componentes del formulario
 
-        public int SendMail(string[] toAddresses, string subject, string body, string[] attachmentPaths)
-        {         
-            foreach (string toAddress in toAddresses)
-            if (!IsValidEmail(toAddress))
-                    return SendMailReturnCodes.RecipientAddressError;
-            try
-            {
-                string mimeEmail = GenerateMimeEmail(fromAddress, toAddresses, subject, body, attachmentPaths);
-
-                using (var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-                {
-                    client.Connect(smtpServer, port);
-                    using (var stream = new NetworkStream(client))
-                    using (var writer = new StreamWriter(stream, Encoding.ASCII) {AutoFlush = true})
-                    using (var reader = new StreamReader(stream, Encoding.ASCII))
-                    {
-                            WriteLine(writer, $"HELO {smtpServer}");
-                            if (!CheckResponse(reader, "250"))
-                                return SendMailReturnCodes.ConnectionError;
-
-                        WriteLine(writer, "AUTH LOGIN");
-                        WriteLine(writer, Convert.ToBase64String(Encoding.UTF8.GetBytes(username)));
-                        WriteLine(writer, Convert.ToBase64String(Encoding.UTF8.GetBytes(password)));
-                        if (!CheckResponse(reader, "235"))
-                            return SendMailReturnCodes.AuthenticationError;
-
-                        WriteLine(writer, $"MAIL FROM:<{fromAddress}>");
-                        if (!CheckResponse(reader, "250"))
-                            return SendMailReturnCodes.SenderAddressError;
-
-                        foreach (string toAddress in toAddresses)
-                        {
-                            WriteLine(writer, $"RCPT TO:<{toAddress}>");
-                            if (!CheckResponse(reader, "250"))
-                                return SendMailReturnCodes.RecipientAddressError;
-                        }
-
-                        WriteLine(writer, "DATA");
-                        if (!CheckResponse(reader, "354"))
-                            return SendMailReturnCodes.DataTransmissionError;
-
-                        WriteLine(writer,mimeEmail);
-                        WriteLine(writer, ".");
-
-                        if (!CheckResponse(reader, "250"))
-                            return SendMailReturnCodes.MessageBodyError;
-
-                        WriteLine(writer, "QUIT");
-                        if (!CheckResponse(reader, "221"))
-                            return SendMailReturnCodes.QuitCommandError;
-                    }
-                return SendMailReturnCodes.Success;
-                }
-            }	
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al enviar el correo electrónico: {ex.Message}");
-                return SendMailReturnCodes.GenerateMimeEmailError;
-            }
-        }
-
-        private void UpdateStatus(string format, params object[] args)
-        {
-            this.status.AppendText(string.Format(format, args) + Environment.NewLine);
-        }
-
-        private void WriteLine(StreamWriter writer, string line = null)
-        {
-            if (line != null) {
-                writer.WriteLine(line);
-                UpdateStatus($"SEND: {line}");
-            }
-            else {
-                writer.WriteLine();
-                UpdateStatus($"SEND:");
-            }
-        }
-
-        private bool CheckResponse(StreamReader reader, string expectedCode)
-        {
-            string response = reader.ReadLine();
-            UpdateStatus($"RESPONSE: {0}", response);
-            return response.StartsWith(expectedCode);
-        }
-        
-        private bool IsValidEmail(string email)
-        {
-            try
-            {
-                // Verificar el formato de la dirección de correo electrónico utilizando una expresión regular
-                var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-                return emailRegex.IsMatch(email);
-            }
-            catch (FormatException)
-            {
-                return false;
-            }
-        }
-        
-        public static string GenerateMimeEmail(string from, string[] to, string subject, string body, string[] attachments = null)
-        {
-            // Boundary para separar las partes MIME
-            string boundary = Guid.NewGuid().ToString().Replace("-", "");
-
-            StringBuilder mimeBuilder = new StringBuilder();
-
-            // Encabezado MIME del correo electrónico
-            mimeBuilder.AppendLine($"From: {from}");
-            mimeBuilder.AppendLine($"To: {string.Join(",", to)}");
-            mimeBuilder.AppendLine($"Subject: {subject}");
-            mimeBuilder.AppendLine("MIME-Version: 1.0");
-            mimeBuilder.AppendLine($"Content-Type: multipart/mixed; boundary={boundary}");
-            mimeBuilder.AppendLine();
-
-            // Parte de texto del correo electrónico
-            mimeBuilder.AppendLine($"--{boundary}");
-            mimeBuilder.AppendLine("Content-Type: text/plain; charset=utf-8");
-            mimeBuilder.AppendLine("Content-Transfer-Encoding: 7bit");
-            mimeBuilder.AppendLine();
-            mimeBuilder.AppendLine(body);
-            mimeBuilder.AppendLine();
-
-            // Adjuntos
-            if(attachments != null) {
-                foreach (string attachmentPath in attachments)
-                {
-                    mimeBuilder.AppendLine($"--{boundary}");
-                    mimeBuilder.AppendLine($"Content-Type: application/octet-stream; name=\"{Path.GetFileName(attachmentPath)}\"");
-                    mimeBuilder.AppendLine("Content-Transfer-Encoding: base64");
-                    mimeBuilder.AppendLine($"Content-Disposition: attachment; filename=\"{Path.GetFileName(attachmentPath)}\"");
-                    mimeBuilder.AppendLine();
-
-                    // Lectura del archivo adjunto y codificación en base64
-                    byte[] attachmentBytes = File.ReadAllBytes(attachmentPath);
-                    string base64Attachment = Convert.ToBase64String(attachmentBytes);
-                    mimeBuilder.AppendLine(base64Attachment);
-                    mimeBuilder.AppendLine();
-                }
-            }
-
-            // Final del correo electrónico MIME
-            mimeBuilder.AppendLine($"--{boundary}--");
-
-            return mimeBuilder.ToString();
-        }
-
-        
-
-    }
-
-    public partial class MainForm : Form
-    {
-         // Agrega campos privados para almacenar los valores de usuario y contraseña
-        private string username;
-        private string password;
-        public MainForm(string username, string password)
-        {
-            InitializeComponent();
+            #pragma warning disable CS8622 // Nullability of reference types in type of parameter doesn't match the target delegate (possibly because of nullability attributes).
+            this.Click += MainForm_Click; // Asigna el evento Click del formulario al método MainForm_Click
+            #pragma warning restore CS8622 // Nullability of reference types in type of parameter doesn't match the target delegate (possibly because of nullability attributes).
+            
             // Almacena los valores de usuario y contraseña en los campos privados
-            this.username = username;
-            this.password = password;
-            txtUsername.Text = this.username;
-            txtPassword.Text = this.password;
+            this.username = username; // Asigna el nombre de usuario
+            this.password = password; // Asigna la contraseña
+            txtUsername.Text = this.username; // Asigna el nombre de usuario al TextBox txtUsername
+            txtPassword.Text = this.password; // Asigna la contraseña al TextBox txtPassword
+            
             // Inicializar los valores predeterminados de los TextBoxes
-            txtServerIP.Text = "127.0.0.1";
-            txtPort.Text = "25";
-            txtFrom.Text = "mi_correo@example.com";
-            txtTo.Text = "example1@example.com;example2@example.com";
-            txtSubject.Text = "Correo de Prueba";
-            txtAttachments.Text = "";
-            txtMessages.Text = "";
-            txtBody.Text = "Esto es un mensaje de prueba";
+            txtServerIP.Text = "127.0.0.1"; // Asigna la dirección IP del servidor SMTP por defecto al TextBox txtServerIP
+            txtPort.Text = "25"; // Asigna el puerto del servidor SMTP por defecto al TextBox txtPort
         }
 
-        private void btnAdjuntar_Click(object sender, EventArgs e)
+        private void btnAdjuntar_Click(object sender, EventArgs e) // Método para manejar el clic en el botón "Adjuntar"
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Multiselect = true;
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            OpenFileDialog openFileDialog = new OpenFileDialog(); // Crea una instancia de OpenFileDialog
+            
+            openFileDialog.Multiselect = true; // Habilita la selección múltiple de archivos
+            
+            if (openFileDialog.ShowDialog() == DialogResult.OK) // Si se selecciona al menos un archivo y se confirma
             {
-                txtAttachments.Text = string.Join(";", openFileDialog.FileNames);
+                txtAttachments.Text = string.Join(";", openFileDialog.FileNames); // Muestra los nombres de los archivos seleccionados en el TextBox txtAttachments
             }
         }
 
-        private void btnSend_Click(object sender, EventArgs e)
+        private void btnSend_Click(object sender, EventArgs e) // Método para manejar el clic en el botón "Enviar"
         {
-            try
+            try // Intenta realizar las siguientes operaciones
             {
-                string[] toAddresses = txtTo.Text.Split(';').Select(x => x.Trim()).ToArray();
-                string[] attachmentPaths =  txtAttachments.Text.Length == 0 ? null : txtAttachments.Text.Split(';').Select(x => x.Trim()).ToArray();
-
-                ClientSMTP smtpClient = new ClientSMTP(
-                    txtServerIP.Text,
-                    int.Parse(txtPort.Text),
-                    txtUsername.Text,
-                    txtPassword.Text, // Cambia "tu_contrasena" por la contraseña real del correo
-                    txtFrom.Text, txtMessages
-                );
-
-                int resultCode = smtpClient.SendMail(
-                    toAddresses,
-                    txtSubject.Text,
-                    txtBody.Text,
-                    attachmentPaths
-                );
+                string[] toAddresses = txtTo.Text.Split(';').Select(x => x.Trim()).ToArray(); // Obtiene las direcciones de correo electrónico de los destinatarios y las almacena en un arreglo de strings
+                string[]? attachmentPaths = txtAttachments.Text.Length == 0 ? null : txtAttachments.Text.Split(';').Select(x => x.Trim()).ToArray(); // Obtiene las rutas de los archivos adjuntos y las almacena en un arreglo de strings
                 
+                ClientSMTP smtpClient = new ClientSMTP( // Crea una instancia de ClientSMTP
+                    txtServerIP.Text, // Pasa la dirección IP del servidor SMTP
+                    int.Parse(txtPort.Text), // Pasa el puerto del servidor SMTP
+                    txtUsername.Text, // Pasa el nombre de usuario
+                    txtPassword.Text, // Pasa la contraseña
+                    txtFrom.Text, txtMessages // Pasa el remitente y el mensaje
+                );
 
-                if (resultCode == SendMailReturnCodes.Success)
+                #pragma warning disable CS8604 // Possible null reference argument.
+                int resultCode = smtpClient.SendMail( // Envía el correo electrónico y almacena el código de resultado
+                    toAddresses, // Pasa las direcciones de correo electrónico de los destinatarios
+                    txtSubject.Text, // Pasa el asunto del correo electrónico
+                    txtBody.Text, // Pasa el cuerpo del correo electrónico
+                    attachmentPaths // Pasa las rutas de los archivos adjuntos
+                );
+                #pragma warning restore CS8604 // Possible null reference argument.
+
+                if (resultCode == SendMailReturnCodes.Success) // Si el correo electrónico se envió correctamente
                 {
-                    MessageBox.Show("Correo enviado correctamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Correo enviado correctamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information); // Muestra un mensaje de éxito
                 }
-                else
+                else // Si hubo un error al enviar el correo electrónico
                 {
-                    MessageBox.Show($"Error al enviar el correo electrónico. Código de error: {resultCode}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Error al enviar el correo electrónico. Código de error: {resultCode}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); // Muestra un mensaje de error con el código de error
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) // Captura cualquier excepción
             {
-                MessageBox.Show($"Error al enviar el correo electrónico: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error al enviar el correo electrónico: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); // Muestra un mensaje de error con la descripción de la excepción
             }
         }
-        private void btnExit_Click(object sender, EventArgs e)
+        
+        private void btnExit_Click(object sender, EventArgs e) // Método para manejar el clic en el botón "Salir"
         {
             // Cerrar MainForm
-            this.Close();
+            this.Close(); // Cierra el formulario actual
+
             // Cerrar LoginForm
-            Application.OpenForms["LoginForm"].Close();
+            #pragma warning disable CS8602 // Dereference of a possibly null reference.
+            Application.OpenForms["LoginForm"].Close(); // Cierra el formulario LoginForm
+            #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
-        protected override void OnClosed(EventArgs e)
+        protected override void OnClosed(EventArgs e) // Método que se ejecuta cuando se cierra el formulario
         {
-            Application.OpenForms["LoginForm"].Close();
-            base.OnClosed(e);
+            #pragma warning disable CS8602 // Dereference of a possibly null reference.
+            Application.OpenForms["LoginForm"].Close(); // Cierra el formulario LoginForm
+            #pragma warning restore CS8602 // Dereference of a possibly null reference.
+            base.OnClosed(e); // Llama al método base OnClosed
         }
 
-        
+        private void MainForm_Click(object sender, EventArgs e) // Método para manejar el clic en el formulario
+        {
+            // Obtenemos las coordenadas del clic relativas al formulario
+            Point relativePoint = this.PointToClient(Cursor.Position);
+
+            // Comprobamos si las coordenadas están dentro de algún control
+            bool insideControl = false;
+            foreach (Control control in this.Controls)
+            {
+                if (control.Bounds.Contains(relativePoint)) // Comprueba si las coordenadas están dentro de los límites del control actual
+                {
+                    insideControl = true; // Establece que el clic está dentro de algún control
+                    break; // Sale del bucle ya que se encontró un control que contiene las coordenadas del clic
+                }
+            }
+
+            // Si no está dentro de ningún control, mostramos el MessageBox
+            if (!insideControl) // Si el clic no está dentro de ningún control
+            {
+                // Inicializar los valores predeterminados de los TextBoxes
+                txtFrom.Text = "mi_correo@example.com"; // Asigna un valor predeterminado al TextBox txtFrom
+                txtTo.Text = "example1@example.com;example2@example.com"; // Asigna un valor predeterminado al TextBox txtTo
+                txtSubject.Text = "Correo de Prueba"; // Asigna un valor predeterminado al TextBox txtSubject
+                txtAttachments.Text = ""; // Limpia el contenido del TextBox txtAttachments
+                txtMessages.Text = ""; // Limpia el contenido del TextBox txtMessages
+                txtBody.Text = "Esto es un mensaje de prueba"; // Asigna un valor predeterminado al TextBox txtBody
+            }
+        }
     }
 }
