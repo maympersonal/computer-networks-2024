@@ -26,3 +26,18 @@ E:\universidad\3er ano\smtp\client\SmtpClientApp\obj\Debug\net8.0-windows\refint
 E:\universidad\3er ano\smtp\client\SmtpClientApp\obj\Debug\net8.0-windows\SmtpClientApp.pdb
 E:\universidad\3er ano\smtp\client\SmtpClientApp\obj\Debug\net8.0-windows\SmtpClientApp.genruntimeconfig.cache
 E:\universidad\3er ano\smtp\client\SmtpClientApp\obj\Debug\net8.0-windows\ref\SmtpClientApp.dll
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\bin\Debug\net8.0-windows\SmtpClientApp.exe
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\bin\Debug\net8.0-windows\SmtpClientApp.deps.json
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\bin\Debug\net8.0-windows\SmtpClientApp.runtimeconfig.json
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\bin\Debug\net8.0-windows\SmtpClientApp.dll
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\bin\Debug\net8.0-windows\SmtpClientApp.pdb
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\obj\Debug\net8.0-windows\SmtpClientApp.GeneratedMSBuildEditorConfig.editorconfig
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\obj\Debug\net8.0-windows\SmtpClientApp.AssemblyInfoInputs.cache
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\obj\Debug\net8.0-windows\SmtpClientApp.AssemblyInfo.cs
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\obj\Debug\net8.0-windows\SmtpClientApp.csproj.CoreCompileInputs.cache
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\obj\Debug\net8.0-windows\SmtpClientApp.sourcelink.json
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\obj\Debug\net8.0-windows\SmtpClientApp.dll
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\obj\Debug\net8.0-windows\refint\SmtpClientApp.dll
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\obj\Debug\net8.0-windows\SmtpClientApp.pdb
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\obj\Debug\net8.0-windows\SmtpClientApp.genruntimeconfig.cache
+D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\obj\Debug\net8.0-windows\ref\SmtpClientApp.dll

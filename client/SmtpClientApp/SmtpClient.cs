@@ -62,9 +62,11 @@ namespace SmtpClientApp // Define el espacio de nombres SmtpClientApp
                     using (var writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true }) // Crea un escritor para escribir en el flujo de red
                     using (var reader = new StreamReader(stream, Encoding.ASCII)) // Crea un lector para leer del flujo de red
                     {
+                        Console.WriteLine("aaaaa");
                         SendCommand(writer, $"HELO {smtpServer}"); // Envía el comando HELO al servidor SMTP
-                        if (!CheckResponse(reader, "250")) // Comprueba la respuesta del servidor
-                            return SendMailReturnCodes.ConnectionError; // Devuelve un código de error de conexión
+                        if (!CheckResponse(reader, "250")){
+                            Console.WriteLine("aaaa"); // Comprueba la respuesta del servidor
+                            return SendMailReturnCodes.ConnectionError;} // Devuelve un código de error de conexión
 
                         SendCommand(writer, "AUTH LOGIN"); // Envía el comando AUTH LOGIN al servidor SMTP
                         SendCommand(writer, Convert.ToBase64String(Encoding.UTF8.GetBytes(username))); // Envía el nombre de usuario codificado en base64 al servidor SMTP
