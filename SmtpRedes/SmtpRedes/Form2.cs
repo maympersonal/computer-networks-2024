@@ -100,7 +100,7 @@ namespace SmtpRedes
                     response = ReceiveResponse(clientSocket);
                     Console.WriteLine("Respuesta del servidor: " + response);
 
-                    // Envía el contenido del mensaje (aquí puedes incluir el cuerpo del correo y los archivos adjuntos)
+                    // Envía el contenido del mensaje
                     SendCommand(clientSocket, "Subject: " + textBox5.Text + "\r\n");
                     SendCommand(clientSocket, "From: " + username + "\r\n");
                     SendCommand(clientSocket, "To: " + textBox1.Text + "\r\n");
@@ -110,7 +110,6 @@ namespace SmtpRedes
                     if (textBox2.Text.Length > 0) 
                     {
                         string filepath = textBox2.Text;
-                        // Adjunta un archivo (reemplaza con tu propio archivo)
                         SendCommand(clientSocket, "\r\n");
                         SendCommand(clientSocket, "------BOUNDARY\r\n");
                         SendCommand(clientSocket, "Content-Type: application/octet-stream\r\n");
