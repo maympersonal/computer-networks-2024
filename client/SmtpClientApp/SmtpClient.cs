@@ -64,15 +64,35 @@ namespace SmtpClientApp // Define el espacio de nombres SmtpClientApp
                     {
                         Console.WriteLine("aaaaa");
                         SendCommand(writer, $"HELO {smtpServer}"); // Envía el comando HELO al servidor SMTP
+<<<<<<< Updated upstream
                         if (!CheckResponse(reader, "250")){
                             Console.WriteLine("aaaa"); // Comprueba la respuesta del servidor
                             return SendMailReturnCodes.ConnectionError;} // Devuelve un código de error de conexión
 
+=======
+                        if (!CheckResponse(reader, "220")) // Comprueba la respuesta del servidor
+                            return SendMailReturnCodes.ConnectionError; // Devuelve un código de error de conexión
+                        if (!CheckResponse(reader, "250")) // Comprueba la respuesta del servidor
+                            return SendMailReturnCodes.ConnectionError; // Devuelve un código de error de conexión
+                        
+                        
+                        //SendCommand(writer, $"{smtpServer}"); // Envía el comando HELO al servidor SMTP
+                        //if (!CheckResponse(reader, "250")) // Comprueba la respuesta del servidor
+                         //   return SendMailReturnCodes.ConnectionError; // Devuelve un código de error de conexión
+                        //if (!CheckResponse(reader, "250")) // Comprueba la respuesta del servidor
+                            //return SendMailReturnCodes.ConnectionError; // Devuelve un código de error de conexión
+                        //SendCommand(writer, "AUTH"); // Envía el comando AUTH LOGIN al servidor SMTP
+                        //ShowResponse(reader);
+>>>>>>> Stashed changes
                         SendCommand(writer, "AUTH LOGIN"); // Envía el comando AUTH LOGIN al servidor SMTP
+                        if (!CheckResponse(reader, "334")) // Comprueba la respuesta del servidor
+                            return SendMailReturnCodes.AuthenticationError; // Devuelve un código de error de autenticación
                         SendCommand(writer, Convert.ToBase64String(Encoding.UTF8.GetBytes(username))); // Envía el nombre de usuario codificado en base64 al servidor SMTP
+                        if (!CheckResponse(reader, "334")) // Comprueba la respuesta del servidor
+                            return SendMailReturnCodes.AuthenticationError; // Devuelve un código de error de autenticación
                         SendCommand(writer, Convert.ToBase64String(Encoding.UTF8.GetBytes(password))); // Envía la contraseña codificada en base64 al servidor SMTP
                         if (!CheckResponse(reader, "235")) // Comprueba la respuesta del servidor
-                            return SendMailReturnCodes.AuthenticationError; // Devuelve un código de error de autenticación
+                           return SendMailReturnCodes.AuthenticationError; // Devuelve un código de error de autenticación
 
                         SendCommand(writer, $"MAIL FROM:<{fromAddress}>"); // Envía el comando MAIL FROM al servidor SMTP
                         if (!CheckResponse(reader, "250")) // Comprueba la respuesta del servidor
@@ -82,16 +102,15 @@ namespace SmtpClientApp // Define el espacio de nombres SmtpClientApp
                         {
                             SendCommand(writer, $"RCPT TO:<{toAddress}>"); // Envía el comando RCPT TO al servidor SMTP
                             if (!CheckResponse(reader, "250")) // Comprueba la respuesta del servidor
-                                return SendMailReturnCodes.RecipientAddressError; // Devuelve un código de error de dirección de destinatario
+                              return SendMailReturnCodes.RecipientAddressError; // Devuelve un código de error de dirección de destinatario
                         }
 
                         SendCommand(writer, "DATA"); // Envía el comando DATA al servidor SMTP
                         if (!CheckResponse(reader, "354")) // Comprueba la respuesta del servidor
-                            return SendMailReturnCodes.DataTransmissionError; // Devuelve un código de error de transmisión de datos
+                           return SendMailReturnCodes.DataTransmissionError; // Devuelve un código de error de transmisión de datos
 
                         SendCommand(writer, mimeEmail); // Envía el correo electrónico MIME al servidor SMTP
                         SendCommand(writer, "."); // Envía el comando "." al servidor SMTP
-
                         if (!CheckResponse(reader, "250")) // Comprueba la respuesta del servidor
                             return SendMailReturnCodes.MessageBodyError; // Devuelve un código de error de cuerpo del mensaje
 
@@ -129,6 +148,13 @@ namespace SmtpClientApp // Define el espacio de nombres SmtpClientApp
             }
         }
 
+        private void ShowResponse(StreamReader reader) // Define un método privado CheckResponse para verificar las respuestas del servidor SMTP
+        {
+            #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+            string response = reader.ReadLine(); // Lee la respuesta del servidor
+            #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+            UpdateStatus($"RESPONSE: {response}"); // Actualiza el estado con la respuesta recibida
+        }
         private bool CheckResponse(StreamReader reader, string expectedCode) // Define un método privado CheckResponse para verificar las respuestas del servidor SMTP
         {
             #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.

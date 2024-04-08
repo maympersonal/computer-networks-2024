@@ -1,8 +1,14 @@
 {
   "version": 2,
+<<<<<<< Updated upstream
   "dgSpecHash": "mxr0nDQAQhz/5BDKYQ8hWu4vz79fgzqePbF6g65uo8aNReGW106iKze+gNxgWKQnkRB5nTunw5xgoBg3wtc61A==",
   "success": true,
   "projectFilePath": "D:\\cosas_de_la_carrera\\ciber tercero\\Redes\\Nuevo proyecto\\computer-networks-2024\\client\\SmtpClientApp\\SmtpClientApp.csproj",
+=======
+  "dgSpecHash": "RFEXJU1EA1cXHnjdis3/12G/CPqXzdgbcmVxHO7eBnMWikosZGZcqFnLUGJk4oCu/iVuEzHUZP5j0GGYBckUoA==",
+  "success": true,
+  "projectFilePath": "E:\\universidad\\3er ano\\smtp 1.0\\client\\SmtpClientApp\\SmtpClientApp.csproj",
+>>>>>>> Stashed changes
   "expectedPackageFiles": [],
   "logs": []
 }

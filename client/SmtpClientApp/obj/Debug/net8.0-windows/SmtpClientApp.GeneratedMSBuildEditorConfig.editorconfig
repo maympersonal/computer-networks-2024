@@ -14,6 +14,10 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SmtpClientApp
+<<<<<<< Updated upstream
 build_property.ProjectDir = D:\cosas_de_la_carrera\ciber tercero\Redes\Nuevo proyecto\computer-networks-2024\client\SmtpClientApp\
+=======
+build_property.ProjectDir = e:\universidad\3er ano\smtp 1.0\client\SmtpClientApp\
+>>>>>>> Stashed changes
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

@@ -12,3 +12,17 @@ E:\universidad\3er ano\smtp\server\SmtpServerApp\obj\Debug\net8.0-windows\refint
 E:\universidad\3er ano\smtp\server\SmtpServerApp\obj\Debug\net8.0-windows\SmtpServerApp.pdb
 E:\universidad\3er ano\smtp\server\SmtpServerApp\obj\Debug\net8.0-windows\SmtpServerApp.genruntimeconfig.cache
 E:\universidad\3er ano\smtp\server\SmtpServerApp\obj\Debug\net8.0-windows\ref\SmtpServerApp.dll
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\bin\Debug\net8.0-windows\SmtpServerApp.exe
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\bin\Debug\net8.0-windows\SmtpServerApp.deps.json
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\bin\Debug\net8.0-windows\SmtpServerApp.runtimeconfig.json
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\bin\Debug\net8.0-windows\SmtpServerApp.dll
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\bin\Debug\net8.0-windows\SmtpServerApp.pdb
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\obj\Debug\net8.0-windows\SmtpServerApp.GeneratedMSBuildEditorConfig.editorconfig
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\obj\Debug\net8.0-windows\SmtpServerApp.AssemblyInfoInputs.cache
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\obj\Debug\net8.0-windows\SmtpServerApp.AssemblyInfo.cs
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\obj\Debug\net8.0-windows\SmtpServerApp.csproj.CoreCompileInputs.cache
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\obj\Debug\net8.0-windows\SmtpServerApp.dll
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\obj\Debug\net8.0-windows\refint\SmtpServerApp.dll
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\obj\Debug\net8.0-windows\SmtpServerApp.pdb
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\obj\Debug\net8.0-windows\SmtpServerApp.genruntimeconfig.cache
+E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\obj\Debug\net8.0-windows\ref\SmtpServerApp.dll

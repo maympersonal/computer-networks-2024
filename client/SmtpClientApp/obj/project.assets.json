@@ -13,11 +13,19 @@
   "project": {
     "version": "1.0.0",
     "restore": {
+<<<<<<< Updated upstream
       "projectUniqueName": "D:\\cosas_de_la_carrera\\ciber tercero\\Redes\\Nuevo proyecto\\computer-networks-2024\\client\\SmtpClientApp\\SmtpClientApp.csproj",
       "projectName": "SmtpClientApp",
       "projectPath": "D:\\cosas_de_la_carrera\\ciber tercero\\Redes\\Nuevo proyecto\\computer-networks-2024\\client\\SmtpClientApp\\SmtpClientApp.csproj",
       "packagesPath": "C:\\Users\\Usuario\\.nuget\\packages\\",
       "outputPath": "D:\\cosas_de_la_carrera\\ciber tercero\\Redes\\Nuevo proyecto\\computer-networks-2024\\client\\SmtpClientApp\\obj\\",
+=======
+      "projectUniqueName": "E:\\universidad\\3er ano\\smtp 1.0\\client\\SmtpClientApp\\SmtpClientApp.csproj",
+      "projectName": "SmtpClientApp",
+      "projectPath": "E:\\universidad\\3er ano\\smtp 1.0\\client\\SmtpClientApp\\SmtpClientApp.csproj",
+      "packagesPath": "C:\\Users\\JMYAML\\.nuget\\packages\\",
+      "outputPath": "E:\\universidad\\3er ano\\smtp 1.0\\client\\SmtpClientApp\\obj\\",
+>>>>>>> Stashed changes
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config",
