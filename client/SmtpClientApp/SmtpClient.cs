@@ -69,7 +69,13 @@ namespace SmtpClientApp // Define el espacio de nombres SmtpClientApp
                             return SendMailReturnCodes.ConnectionError; // Devuelve un código de error de conexión
                         
                         
-                        
+                        //SendCommand(writer, $"{smtpServer}"); // Envía el comando HELO al servidor SMTP
+                        //if (!CheckResponse(reader, "250")) // Comprueba la respuesta del servidor
+                         //   return SendMailReturnCodes.ConnectionError; // Devuelve un código de error de conexión
+                        //if (!CheckResponse(reader, "250")) // Comprueba la respuesta del servidor
+                            //return SendMailReturnCodes.ConnectionError; // Devuelve un código de error de conexión
+                        //SendCommand(writer, "AUTH"); // Envía el comando AUTH LOGIN al servidor SMTP
+                        //ShowResponse(reader);
                         SendCommand(writer, "AUTH LOGIN"); // Envía el comando AUTH LOGIN al servidor SMTP
                         if (!CheckResponse(reader, "334")) // Comprueba la respuesta del servidor
                             return SendMailReturnCodes.AuthenticationError; // Devuelve un código de error de autenticación

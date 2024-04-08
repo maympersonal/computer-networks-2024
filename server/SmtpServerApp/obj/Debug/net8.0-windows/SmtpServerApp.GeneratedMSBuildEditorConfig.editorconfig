@@ -14,6 +14,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SmtpServerApp
-build_property.ProjectDir = C:\Users\Miguel Alejandro\Documents\3er Año\Redes\computer-networks-2024\server\SmtpServerApp\
+build_property.ProjectDir = E:\universidad\3er ano\smtp 1.0\server\SmtpServerApp\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
