@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "5FOZBVe/d/AHJkKBVwBEKTJHFhRTA44N+SchjA4YQN+imWp2wE5MQJbAIJE5mRLhC9Z9dtFTJ5CBNlpLzNnQyQ==",
+  "dgSpecHash": "oY9ouFvICZj9VnbToFqpDNJllQQytDr+qpbSM8lG3T/TGNzMRp4cycn1f0HdeqAb4U5WElUmwjV216hCi6iNVw==",
   "success": true,
-  "projectFilePath": "E:\\universidad\\3er ano\\smtp 1.0\\server\\SmtpServerApp\\SmtpServerApp.csproj",
+  "projectFilePath": "C:\\Users\\Miguel Alejandro\\Documents\\3er Año\\Redes\\smtp 1.1\\server\\SmtpServerApp\\SmtpServerApp.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

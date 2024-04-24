@@ -19,7 +19,7 @@ namespace SmtpClientApp // Define el espacio de nombres SmtpClientApp
         // Agrega campos privados para almacenar los valores de usuario y contraseña
         private string username; // Almacena el nombre de usuario
         private string password; // Almacena la contraseña
-
+        private SmtpConfigReader reader = new SmtpConfigReader("config.txt");
         public MainForm(string username, string password) // Constructor de la clase MainForm
         {
             InitializeComponent(); // Inicializa los componentes del formulario
@@ -35,8 +35,9 @@ namespace SmtpClientApp // Define el espacio de nombres SmtpClientApp
             txtPassword.Text = this.password; // Asigna la contraseña al TextBox txtPassword
             
             // Inicializar los valores predeterminados de los TextBoxes
-            txtServerIP.Text = "127.0.0.1"; // Asigna la dirección IP del servidor SMTP por defecto al TextBox txtServerIP
-            txtPort.Text = "25"; // Asigna el puerto del servidor SMTP por defecto al TextBox txtPort
+            txtServerIP.Text = reader.ServerIP; // Asigna la dirección IP del servidor SMTP por defecto al TextBox txtServerIP
+            txtPort.Text = reader.Port; // Asigna el puerto del servidor SMTP por defecto al TextBox txtPort
+            
         }
 
         private void btnAdjuntar_Click(object sender, EventArgs e) // Método para manejar el clic en el botón "Adjuntar"
@@ -47,8 +48,12 @@ namespace SmtpClientApp // Define el espacio de nombres SmtpClientApp
             
             if (openFileDialog.ShowDialog() == DialogResult.OK) // Si se selecciona al menos un archivo y se confirma
             {
-                txtAttachments.Text = string.Join(";", openFileDialog.FileNames); // Muestra los nombres de los archivos seleccionados en el TextBox txtAttachments
+                if (txtAttachments.Text.Length > 0)
+                    txtAttachments.Text = txtAttachments.Text + ";" + string.Join(";", openFileDialog.FileNames); // Muestra los nombres de los archivos seleccionados en el TextBox txtAttachments
+                else
+                    txtAttachments.Text = string.Join(";", openFileDialog.FileNames);
             }
+
         }
 
         private void btnSend_Click(object sender, EventArgs e) // Método para manejar el clic en el botón "Enviar"
@@ -58,12 +63,14 @@ namespace SmtpClientApp // Define el espacio de nombres SmtpClientApp
                 string[] toAddresses = txtTo.Text.Split(';').Select(x => x.Trim()).ToArray(); // Obtiene las direcciones de correo electrónico de los destinatarios y las almacena en un arreglo de strings
                 string[]? attachmentPaths = txtAttachments.Text.Length == 0 ? null : txtAttachments.Text.Split(';').Select(x => x.Trim()).ToArray(); // Obtiene las rutas de los archivos adjuntos y las almacena en un arreglo de strings
                 
+                Viewer viewer = new Viewer(txtMessages);
+
                 ClientSMTP smtpClient = new ClientSMTP( // Crea una instancia de ClientSMTP
                     txtServerIP.Text, // Pasa la dirección IP del servidor SMTP
                     int.Parse(txtPort.Text), // Pasa el puerto del servidor SMTP
                     txtUsername.Text, // Pasa el nombre de usuario
                     txtPassword.Text, // Pasa la contraseña
-                    txtFrom.Text, txtMessages // Pasa el remitente y el mensaje
+                    txtFrom.Text, viewer // Pasa el remitente y el mensaje
                 );
 
                 #pragma warning disable CS8604 // Possible null reference argument.

@@ -4,7 +4,7 @@ using System.Windows.Forms; // Importa el espacio de nombres System.Windows.Form
 namespace SmtpClientApp
 {
     public partial class LoginForm : Form // Definición de la clase LoginForm que hereda de Form
-    {
+    {   private SmtpConfigReader reader = new SmtpConfigReader("config.txt");
         public LoginForm() // Constructor de la clase LoginForm
         {
             InitializeComponent(); // Inicializa los componentes del formulario
@@ -19,8 +19,25 @@ namespace SmtpClientApp
             string username = txtUsername.Text; // Obtiene el texto del TextBox txtUsername
             string password = txtPassword.Text; // Obtiene el texto del TextBox txtPassword
 
-            // Verificar las credenciales (aquí deberías tener tu propia lógica de autenticación)
-            if (username == "mi_correo@example.com" && password == "mi_contraseña")
+           
+            string txtServerIP = reader.ServerIP;
+            string txtPort = reader.Port;
+            string txtFrom  = reader.From;
+
+            ClientSMTP smtpClient = new ClientSMTP( // Crea una instancia de ClientSMTP
+                txtServerIP, // Pasa la dirección IP del servidor SMTP
+                int.Parse(txtPort), // Pasa el puerto del servidor SMTP
+                txtUsername.Text, // Pasa el nombre de usuario
+                txtPassword.Text, // Pasa la contraseña
+                txtFrom, null // Pasa el remitente y el mensaje
+            );
+
+            #pragma warning disable CS8604 // Possible null reference argument.
+            int resultCode = smtpClient.CheckUser();
+            #pragma warning restore CS8604 // Possible null reference argument.
+
+           // Verificar las credenciales (aquí deberías tener tu propia lógica de autenticación)
+            if (resultCode == 0)
             {
                 MainForm mainForm = new MainForm(username, password); // Crea una instancia de la clase MainForm
                 mainForm.Show(); // Muestra el formulario MainForm
@@ -57,9 +74,10 @@ namespace SmtpClientApp
             // Si no está dentro de ningún control, mostramos el MessageBox
             if (!insideControl)
             {
-                // Inicializar los valores predeterminados de los TextBoxes
-                txtUsername.Text = "mi_correo@example.com";
-                txtPassword.Text = "mi_contraseña";
+                            
+                txtUsername.Text = reader.UserName;
+                txtPassword.Text = reader.Password;
+
             }
         }
     }

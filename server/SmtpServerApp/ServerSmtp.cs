@@ -9,240 +9,259 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using System.Net.Security;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography;
 
 namespace SmtpServerApp
 {
-    // Clase para implementar un servidor SMTP
-    public class ServerSMTP
+// Clase para implementar un servidor SMTP
+public class ServerSMTP
+{
+    private Socket _listener;
+    private int _port;
+    private IPAddress _localAddr;
+    private string _name;
+    private bool _running;
+
+    public bool running => _running;
+
+    private Viewer _status;
+    private List<string> Extensions;
+    private List<string> Commands;
+    private List<string> MailList;
+    X509Certificate serverCertificate = null;
+
+    // Constructor de la clase ServerSMTP
+    public ServerSMTP(string serverName, string ipAddress, int port, Viewer status)
     {
-        private Socket? _listener; // Socket para escuchar las conexiones entrantes
-        private int _port; // Puerto en el que el servidor escucha las conexiones SMTP
-        private IPAddress _localAddr; // Dirección IP local en la que el servidor está enlazado
-        private string _name; // Nombre del servidor SMTP
-        private bool _running; // Estado del servidor SMTP
+        _port = port;
+        _localAddr = IPAddress.Parse(ipAddress);
+        _running = false;
+        _name = serverName;
+        _status = status;
+        _listener = null;
 
-        public bool running => _running; // Propiedad para acceder al estado del servidor SMTP
+        Extensions = new List<string> {
+            "8BITMIME", "SIZE", "SMTPUTF8", "STARTTLS", "AUTH PLAIN LOGIN"
+        };
 
-        private TextBox _status; // Cuadro de texto para mostrar el estado del servidor
-
-        // Clase de datos para representar un correo electrónico
-        public class Email
+        Commands = new List<string>()
         {
-            public required string From { get; set; } // Dirección de correo electrónico del remitente
-            public required string[] To { get; set; } // Direcciones de correo electrónico de los destinatarios
-            public string? Subject { get; set; } // Asunto del correo electrónico
-            public string? Body { get; set; } // Cuerpo del correo electrónico
-            public string[]? Attachments { get; set; } // Archivos adjuntos del correo electrónico
-        }
-
-        // Constructor de la clase ServerSMTP
-        public ServerSMTP(string serverName, string ipAddress, int port, TextBox status)
+            "EHLO", "HELO", "MAIL FROM", "RCPT TO", "DATA", "RSET", "NOOP",
+            "VRFY", "QUIT", "STARTTLS", "AUTH", "HELP", "SIZE", "EXPN"
+        };
+        MailList = new List<string>()
         {
-            _port = port; // Asignar el puerto del servidor SMTP
-            _localAddr = IPAddress.Parse(ipAddress); // Convertir la dirección IP a un objeto IPAddress
-            _running = false; // Inicializar el estado del servidor SMTP como inactivo
-            _name = serverName; // Asignar el nombre del servidor SMTP
-            _status = status; // Asignar el cuadro de texto para mostrar el estado del servidor
-            _listener = null; // Inicializar el socket del servidor como nulo
-        }
+            "user1@example.com", "user2@example.com", "user3@example.com", "user4@example.com"
+        };
 
-        // Método para iniciar el servidor SMTP
-        public void Start()
+        serverCertificate = X509Certificate.CreateFromCertFile("certificate.pfx");
+    }
+
+    // Método para iniciar el servidor SMTP
+
+    public void Start()
+    {
+        _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        _listener.Bind(new IPEndPoint(_localAddr, _port));
+        _listener.Listen(10);
+        _running = true;
+        UpdateStatus("SMTP server {0} started on address {1} in port {2}.", _name, _localAddr, _port);
+        UpdateStatus("Waiting for connections...");
+
+        while (_running)
         {
-            _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp); // Crear un nuevo socket para escuchar las conexiones entrantes
-            _listener.Bind(new IPEndPoint(_localAddr, _port)); // Vincular el socket a la dirección IP y al puerto especificados
-            _listener.Listen(10); // Comenzar a escuchar las conexiones entrantes, con una cola de máximo 10 conexiones pendientes
-            _running = true; // Establecer el estado del servidor como activo
-
-            while (_running) // Bucle principal para manejar las conexiones entrantes mientras el servidor esté en ejecución
-            {
-                Socket client = _listener.Accept(); // Aceptar una nueva conexión de cliente
-                UpdateStatus("Clente conectado" + Environment.NewLine); // Actualizar el estado del servidor
-                Thread clientThread = new Thread(() => ProcessClient(client)); // Crear un nuevo hilo para procesar las solicitudes del cliente
-                clientThread.Start(); // Iniciar el hilo del cliente
-            }
-        }
-
-        // Método para procesar las solicitudes del cliente
-        private void ProcessClient(Socket client)
-        {
-            using (NetworkStream stream = new NetworkStream(client)) // Crear un flujo de red para comunicarse con el cliente
-            using (StreamReader reader = new StreamReader(stream, Encoding.ASCII)) // Crear un lector para leer los datos enviados por el cliente
-            using (StreamWriter writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true }) // Crear un escritor para enviar datos al cliente
-            {
-                string line;
-                #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-                while ((line = reader.ReadLine()) != null) // Leer líneas de datos enviadas por el cliente
-                {
-                    ProcessCommand(line, reader, writer); // Procesar el comando recibido del cliente
-                    UpdateStatus("RECEIVED: {0}", line); // Actualizar el estado del servidor
-                }
-                #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-            }
-            client.Close(); // Cerrar la conexión con el cliente
-            UpdateStatus("SMTP client disconnected."); // Actualizar el estado del servidor
-        }
-
-        // Método para procesar los comandos SMTP recibidos del cliente
-        private void ProcessCommand(string command, StreamReader reader, StreamWriter writer)
-        {
-            // Procesar el comando recibido y enviar la respuesta correspondiente al cliente
-            if (command.StartsWith("HELO") || command.StartsWith("EHLO")) // Verificar si el comando es HELO o EHLO
-            {   
-                SendResponse(writer, "220 Ready"); // Enviar respuesta al cliente con código 250
-                SendResponse(writer, "250 Hello, pleased to meet you"); // Enviar respuesta al cliente con código 250
-            }
-            else if (command.StartsWith("MAIL FROM") || command.StartsWith("RCPT TO")) // Verificar si el comando es MAIL FROM o RCPT TO
-            {
-                SendResponse(writer, "250 OK"); // Enviar respuesta al cliente con código 250
-            }
-            else if (command.StartsWith("DATA")) // Verificar si el comando es DATA
-            {
-                SendResponse(writer, "354 Send message content; end with <CRLF>.<CRLF>"); // Enviar respuesta al cliente con código 354
-
-                // Leer el contenido del correo electrónico
-                string emailContent = ReadEmailContent(reader); // Llamar al método para leer el contenido del correo electrónico
-                SendResponse(writer, "250 OK, message accepted for delivery."); // Enviar respuesta al cliente con código 250
-            }
-            else if (command.StartsWith("QUIT")) // Verificar si el comando es QUIT
-            {
-                SendResponse(writer, "221 Bye"); // Enviar respuesta al cliente con código 221
-            }
-            else if (command.StartsWith("RSET")) // Verificar si el comando es RSET
-            {
-                SendResponse(writer, "250 OK"); // Enviar respuesta al cliente con código 250
-            }
-            else if (command.StartsWith("NOOP")) // Verificar si el comando es NOOP
-            {
-                SendResponse(writer, "250 OK"); // Enviar respuesta al cliente con código 250
-            }
-            else if (command.StartsWith("VRFY")) // Verificar si el comando es VRFY
-            {
-                SendResponse(writer, "502 Command not implemented"); // Enviar respuesta al cliente con código 502
-            }
-            else if (command.StartsWith("HELP")) // Verificar si el comando es HELP
-            {
-                SendResponse(writer, "214 Help message"); // Enviar respuesta al cliente con código 214
-            }
-            else if (command.StartsWith("STARTTLS")) // Verificar si el comando es STARTTLS
-            {
-                SendResponse(writer, "220 Ready to start TLS"); // Enviar respuesta al cliente con código 220
-            }
-            else if (command.StartsWith("AUTH")) // Verificar si el comando es AUTH
-            {
-                SendResponse(writer, "334 VXNlcm5hbWU6");
-                #pragma warning disable CS8604 // Possible null reference argument.
-                UpdateStatus("RECEIVED : {0}", reader.ReadLine()); // Actualizar el estado del servidor con el comando recibido
-                #pragma warning restore CS8604 // Possible null reference argument.
-                SendResponse(writer, "334 UGFzc3dvcmQ6");
-                #pragma warning disable CS8604 // Possible null reference argument.
-                UpdateStatus("RECEIVED : {0}", reader.ReadLine()); // Actualizar el estado del servidor con el comando recibido
-                #pragma warning restore CS8604 // Possible null reference argument.
-                SendResponse(writer, "235 Authentication successful"); // Enviar respuesta al cliente con código 235
-            }
-            else if (command.StartsWith("SIZE")) // Verificar si el comando es SIZE
-            {
-                SendResponse(writer, "250 OK"); // Enviar respuesta al cliente con código 250
-            }
-            else
-            {
-                SendResponse(writer, "500 Syntax error, command unrecognized"); // Enviar respuesta al cliente con código 500
-            }
-        }
-
-
-        // Método para enviar una respuesta al cliente
-        private void SendResponse(StreamWriter writer, string response)
-        {
-            UpdateStatus($"SEND : {response}"); // Actualizar el estado del servidor
-            writer.WriteLine(response); // Enviar la respuesta al cliente
-        }
-
-        // Método para detener el servidor SMTP
-        public void Stop()
-        {
-            _running = false; // Establecer el estado del servidor como inactivo
-            #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            _listener.Close(); // Cerrar el socket del servidor
-            #pragma warning restore CS8602 // Dereference of a possibly null reference.
-        }
-
-        // Método para actualizar el estado del servidor
-        private void UpdateStatus(string format, params object[] args)
-        {
-            _status.AppendText(string.Format(format, args) + Environment.NewLine); // Agregar un texto al cuadro de texto de status
-        }
-
-        // Método para leer el contenido del correo electrónico enviado por el cliente
-        private string ReadEmailContent(StreamReader reader)
-        {
-            StringBuilder emailContent = new StringBuilder(); // Crear un StringBuilder para almacenar el contenido del correo electrónico
-            string line;
-
-            #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-            while ((line = reader.ReadLine()) != null) // Leer líneas de datos enviadas por el cliente
-            {
-                UpdateStatus("RECEIVED : {0}", line); // Actualizar el estado del servidor
-                emailContent.AppendLine(line); // Agregar la línea al contenido del correo electrónico
-                if (line == ".") // Si se encuentra el marcador de finalización del correo electrónico
-                    break; // Salir del bucle
-            }
-            #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-
-            return emailContent.ToString(); // Devolver el contenido del correo electrónico como una cadena
-        }
-
-        // Método estático para analizar un correo electrónico MIME y extraer sus partes
-        public static Email ParseMimeEmail(string mimeEmail)
-        {
-            MailMessage message = new MailMessage(); // Crear un objeto MailMessage para almacenar el correo electrónico
-            List<string> attachments = new List<string>(); // Lista para almacenar los nombres de los archivos adjuntos
-
-            // Dividir el correo electrónico MIME en sus partes
-            string[] parts = mimeEmail.Split(new[] { "\r\n\r\n" }, StringSplitOptions.None);
-
-            // Extraer encabezados del correo electrónico
-            string headers = parts[0];
-            using (StringReader reader = new StringReader(headers))
-            {
-                string line;
-                #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-                while ((line = reader.ReadLine()) != null) // Leer líneas de datos
-                {
-                    if (line.StartsWith("From:"))
-                        message.From = new MailAddress(line.Replace("From:", "").Trim()); // Establecer el remitente del correo electrónico
-                    else if (line.StartsWith("To:"))
-                        message.To.Add(new MailAddress(line.Replace("To:", "").Trim())); // Agregar destinatarios al correo electrónico
-                    else if (line.StartsWith("Subject:"))
-                        message.Subject = line.Replace("Subject:", "").Trim(); // Establecer el asunto del correo electrónico
-                }
-                #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-            }
-
-            // Extraer el cuerpo del mensaje
-            message.Body = parts[1];
-
-            // Buscar archivos adjuntos en el correo electrónico
-            for (int i = 2; i < parts.Length; i++)
-            {
-                string attachment = parts[i];
-                Match match = Regex.Match(attachment, @"Content-Type: application/octet-stream; name=""(.+)""");
-                if (match.Success)
-                {
-                    attachments.Add(match.Groups[1].Value); // Agregar el nombre del archivo adjunto a la lista
-                }
-            }
-
-            #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            return new Email
-            {
-                From = message.From.ToString(), // Convertir el remitente a una cadena
-                To = message.To.Select(addr => addr.ToString()).ToArray(), // Convertir destinatarios a una matriz de cadenas
-                Subject = message.Subject, // Obtener el asunto del correo electrónico
-                Body = message.Body, // Obtener el cuerpo del correo electrónico
-                Attachments = attachments.ToArray() // Convertir la lista de archivos adjuntos a una matriz
-            };
-            #pragma warning restore CS8602 // Dereference of a possibly null reference.
+            Socket client = _listener.Accept();
+            UpdateStatus("SMTP client connected from address {0}.", ((IPEndPoint)client.RemoteEndPoint).Address);
+            Thread clientThread = new Thread(() => ProcessClient(client));
+            clientThread.Start();
         }
     }
+    // Método para procesar las solicitudes del cliente
+    private void ProcessClient(Socket client)
+    {
+        Stream stream = new NetworkStream(client);
+        StreamReader reader = new StreamReader(stream, Encoding.ASCII);
+        StreamWriter writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true };
+
+        string command;
+        int sendstep = 0; //-1 si se desea obligar el AUTH
+        bool rcptto = false;
+        try
+        {
+            SendResponse(writer, $"220 {_name} ready");
+
+            while ((command = reader.ReadLine()) != null)
+            {
+                UpdateStatus("SERVER RECEIVED: {0}", command);
+
+                if (command.StartsWith("HELO"))
+                {
+                    SendResponse(writer, "250 Hello, pleased to meet you");
+                    if (sendstep > 0)
+                        sendstep = 0;
+                }
+                else if (command.StartsWith("EHLO"))
+                {
+                    SendResponse(writer, "250-Hello, pleased to meet you");
+                    foreach (string extension in Extensions)
+                        SendResponse(writer, $"250-{extension}");
+                    SendResponse(writer, $"250 OK");
+                    if (sendstep > 0)
+                        sendstep = 0;
+                }
+                else if (command.StartsWith("STARTTLS"))
+                {
+                    SendResponse(writer, "220 Ready to start TLS");
+                    SslStream sslStream = new SslStream(stream, false);
+
+                    sslStream.AuthenticateAsServer(serverCertificate, clientCertificateRequired: false, checkCertificateRevocation: true);
+                    stream = sslStream;
+                    writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true };
+                    reader = new StreamReader(stream, Encoding.ASCII);
+                }
+                else if (command.StartsWith("AUTH PLAIN"))
+                {
+                    UpdateStatus("SERVER RECEIVED : {0}", reader.ReadLine());
+                    SendResponse(writer, "235 Authentication successful");
+                    sendstep = 0;
+                }
+                else if (command.StartsWith("AUTH LOGIN"))
+                {
+                    SendResponse(writer, "334 VXNlcm5hbWU6");
+                    UpdateStatus("SERVER RECEIVED : {0}", reader.ReadLine());
+                    SendResponse(writer, "334 UGFzc3dvcmQ6");
+                    UpdateStatus("SERVER RECEIVED : {0}", reader.ReadLine());
+                    SendResponse(writer, "235 Authentication successful");
+                    sendstep = 0;
+                }
+                else if (command.StartsWith("MAIL FROM"))
+                {
+                    if (sendstep != 0)
+                        SendResponse(writer, "503 Bad sequence of commands");
+                    else
+                    {
+                        SendResponse(writer, "250 OK");
+                        sendstep = 1;
+                    }
+                }
+                else if (command.StartsWith("RCPT TO"))
+                {
+                    if (sendstep != 1)
+                        SendResponse(writer, "503 Bad sequence of commands");
+                    else
+                    {
+                        SendResponse(writer, "250 OK");
+                        rcptto = true;
+                    }
+                }
+                else if (command.StartsWith("DATA"))
+                {
+                    if ((sendstep != 1) || !rcptto)
+                        SendResponse(writer, "503 Bad sequence of commands");
+                    else
+                    {
+                        SendResponse(writer, "354 Send message content; end with <CRLF>.<CRLF>");
+                        string emailContent = ReadEmailContent(reader);
+                        SendResponse(writer, "250 OK, message accepted for delivery.");
+                        sendstep = 0;
+                        rcptto = false;
+                    }
+                }
+                else if (command.StartsWith("QUIT"))
+                {
+                    SendResponse(writer, "221 Bye");
+                }
+                else if (command.StartsWith("RSET"))
+                {
+                    sendstep = 0;
+                    rcptto = false;
+                    SendResponse(writer, "250 OK");
+                }
+                else if (command.StartsWith("NOOP"))
+                {
+                    SendResponse(writer, "250 OK");
+                }
+                else if (command.StartsWith("VRFY"))
+                {
+                    string username = command.Substring(5);
+                    SendResponse(writer, $"250 {username}");
+                }
+                else if (command.StartsWith("HELP"))
+                {
+                    SendResponse(writer, "214-Commands supported:");
+                    foreach (string comm in Commands)
+                        SendResponse(writer, $"214-    {comm}");
+                    SendResponse(writer, "214 End of HELP info");
+                }
+                else if (command.StartsWith("SIZE"))
+                {
+                    SendResponse(writer, "250 OK");
+                }
+                else if (command.StartsWith("EXPN"))
+                {
+                    string listname = command.Substring(5);
+                    foreach (string user in MailList)
+                        SendResponse(writer, $"250-{user}");
+                    SendResponse(writer, $"250 {listname} ");
+                }
+                else
+                {
+                    SendResponse(writer, "500 Syntax error, command unrecognized");
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            UpdateStatus($"Error: {e.Message}");
+        }
+        client.Close();
+        stream.Dispose();
+        writer.Dispose();
+        reader.Dispose();
+        UpdateStatus("SMTP client disconnected.");
+        UpdateStatus("Waiting for connections...");
+    }
+
+    private void SendResponse(StreamWriter writer, string response)
+    {
+        UpdateStatus($"SERVER SEND: {response}");
+        writer.Write(response + "\r\n");
+    }
+
+    public void Stop()
+    {
+        _running = false;
+        _listener.Close();
+    }
+
+    private void UpdateStatus(string format, params object[] args)
+    {
+        _status.ShowMessage(string.Format(format, args) + Environment.NewLine);
+    }
+
+    private string ReadEmailContent(StreamReader reader)
+    {
+        StringBuilder emailContent = new StringBuilder();
+        string line;
+
+        while ((line = reader.ReadLine()) != null)
+        {
+            UpdateStatus("SERVER RECEIVED : {0}", line);
+            emailContent.AppendLine(line);
+                
+            if (line == ".")
+                break;
+            
+        }
+
+        return emailContent.ToString();
+    }
+
+}
+
+
+
 }

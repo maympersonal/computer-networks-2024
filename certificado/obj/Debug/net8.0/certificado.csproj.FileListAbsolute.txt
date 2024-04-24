@@ -1,0 +1,34 @@
+E:\universidad\3er ano\smtp 1.1\certificado\bin\Debug\net8.0\certificado.exe
+E:\universidad\3er ano\smtp 1.1\certificado\bin\Debug\net8.0\certificado.deps.json
+E:\universidad\3er ano\smtp 1.1\certificado\bin\Debug\net8.0\certificado.runtimeconfig.json
+E:\universidad\3er ano\smtp 1.1\certificado\bin\Debug\net8.0\certificado.dll
+E:\universidad\3er ano\smtp 1.1\certificado\bin\Debug\net8.0\certificado.pdb
+E:\universidad\3er ano\smtp 1.1\certificado\obj\Debug\net8.0\certificado.GeneratedMSBuildEditorConfig.editorconfig
+E:\universidad\3er ano\smtp 1.1\certificado\obj\Debug\net8.0\certificado.AssemblyInfoInputs.cache
+E:\universidad\3er ano\smtp 1.1\certificado\obj\Debug\net8.0\certificado.AssemblyInfo.cs
+E:\universidad\3er ano\smtp 1.1\certificado\obj\Debug\net8.0\certificado.csproj.CoreCompileInputs.cache
+E:\universidad\3er ano\smtp 1.1\certificado\obj\Debug\net8.0\certificado.dll
+E:\universidad\3er ano\smtp 1.1\certificado\obj\Debug\net8.0\refint\certificado.dll
+E:\universidad\3er ano\smtp 1.1\certificado\obj\Debug\net8.0\certificado.pdb
+E:\universidad\3er ano\smtp 1.1\certificado\obj\Debug\net8.0\certificado.genruntimeconfig.cache
+E:\universidad\3er ano\smtp 1.1\certificado\obj\Debug\net8.0\ref\certificado.dll
+E:\universidad\3er ano\smtp 1.1\certificado\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+E:\universidad\3er ano\smtp 1.1\certificado\obj\Debug\net8.0\certificado.csproj.AssemblyReference.cache
+E:\universidad\3er ano\smtp 1.1\certificado\obj\Debug\net8.0\certific.8151DE16.Up2Date
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\bin\Debug\net8.0\certificado.exe
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\bin\Debug\net8.0\certificado.deps.json
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\bin\Debug\net8.0\certificado.runtimeconfig.json
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\bin\Debug\net8.0\certificado.dll
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\bin\Debug\net8.0\certificado.pdb
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\obj\Debug\net8.0\certificado.csproj.AssemblyReference.cache
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\obj\Debug\net8.0\certificado.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\obj\Debug\net8.0\certificado.AssemblyInfoInputs.cache
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\obj\Debug\net8.0\certificado.AssemblyInfo.cs
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\obj\Debug\net8.0\certificado.csproj.CoreCompileInputs.cache
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\obj\Debug\net8.0\certific.8151DE16.Up2Date
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\obj\Debug\net8.0\certificado.dll
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\obj\Debug\net8.0\refint\certificado.dll
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\obj\Debug\net8.0\certificado.pdb
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\obj\Debug\net8.0\certificado.genruntimeconfig.cache
+C:\Users\Miguel Alejandro\Documents\3er Año\Redes\smtp 1.1\certificado\obj\Debug\net8.0\ref\certificado.dll

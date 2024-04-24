@@ -1,0 +1,148 @@
+SEND: EHLO 127.0.0.1
+RESPONSE: 220 JMYAMLPC smtp4dev ready
+RESPONSE: 250-Nice to meet you.
+RESPONSE: 250-8BITMIME
+RESPONSE: 250-SIZE
+RESPONSE: 250-SMTPUTF8
+RESPONSE: 250-STARTTLS
+RESPONSE: 250-AUTH=CRAM-MD5 PLAIN LOGIN ANONYMOUS
+RESPONSE: 250 AUTH CRAM-MD5 PLAIN LOGIN ANONYMOUS
+SEND: STARTTLS
+RESPONSE: 220 Ready to start TLS
+SEND: AUTH LOGIN
+RESPONSE: 334 VXNlcm5hbWU6
+SEND: bWlfY29ycmVvQGV4YW1wbGUuY29t
+RESPONSE: 334 UGFzc3dvcmQ6
+SEND: bWlfY29udHJhc2XDsWE=
+RESPONSE: 235 Authenticated OK
+SEND: MAIL FROM:<mi_correo@example.com>
+RESPONSE: 250 New message started
+SEND: RCPT TO:<example1@example.com>
+RESPONSE: 250 Recipient accepted
+SEND: RCPT TO:<example2@example.com>
+RESPONSE: 250 Recipient accepted
+SEND: DATA
+RESPONSE: 354 End message with period
+SEND: From: mi_correo@example.com
+To: example1@example.com,example2@example.com
+Subject: Correo de Prueba
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary=2222043e61be40e089bde08e8286b4ab
+
+--2222043e61be40e089bde08e8286b4ab
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+Esto es un mensaje de prueba
+
+--2222043e61be40e089bde08e8286b4ab--
+
+SEND: .
+RESPONSE: 250 Mail accepted
+SEND: QUIT
+RESPONSE: 221 Goodbye
+
+
+
+Microsoft Windows [Versión 6.3.9600]
+(c) 2013 Microsoft Corporation. Todos los derechos reservados.
+
+C:\Users\JMYAML>smtp4dev
+smtp4dev version 3.3.4+4155c6db041f9e33160623b5b6ffa557dde4b051
+https://github.com/rnwood/smtp4dev
+.NET Core runtime version: .NET 8.0.2
+
+ > For help use argument --help
+
+Install location: C:\Users\JMYAML
+DataDir: C:\Users\JMYAML\AppData\Roaming\smtp4dev
+Using Sqlite database at C:\Users\JMYAML\AppData\Roaming\smtp4dev\database.db
+Parsing AutomaticRelayExpression 
+Parsing CredentialsValidationExpression 
+Parsing RecipientValidationExpression 
+TLS mode: None
+SMTP Server is listening on port 25.
+Keeping last 100 messages and 100 sessions.
+IMAP Server is listening on port 143
+Now listening on: http://localhost:5000
+Session started. Client address 127.0.0.1.
+Session completed. Client address 127.0.0.1. Number of messages 0.
+Session started. Client address 127.0.0.1.
+Session completed. Client address 127.0.0.1. Number of messages 0.
+Session started. Client address 127.0.0.1.
+Session completed. Client address 127.0.0.1. Number of messages 0.
+ServerOptions changed. Restarting server...
+SMTP server stopping...
+SMTP server stopped.
+IMAP Server is listening on port 143
+TLS mode: StartTls
+Generated new self-signed certificate with subject name 'JMYAMLPC and expiry date 08/04/2034 20:00:00
+Ensure that the hostname you enter into clients and 'JMYAMLPC' from ServerOptions:HostName configuration match exactly and trust the issuer certificate at C:\Users\JMYAML\AppData\Roaming\smtp4dev\selfsigned-certificate.cer in your client/OS to avoid certificate validation errors.
+SMTP Server is listening on port 25.
+Keeping last 100 messages and 100 sessions.
+Session started. Client address 127.0.0.1.
+Message received. Client address 127.0.0.1, From mi_correo@example.com, To example1@example.com, example2@example.com, SecureConnection: True.
+Processing received message
+Processing received message DONE
+Session completed. Client address 127.0.0.1. Number of messages 1.
+Session started. Client address 127.0.0.1.
+Message received. Client address 127.0.0.1, From mi_correo@example.com, To example1@example.com, example2@example.com, SecureConnection: True.
+Processing received message
+Processing received message DONE
+Session completed. Client address 127.0.0.1. Number of messages 1.
+ServerOptions changed. Restarting server...
+IMAP Server is listening on port 143
+SMTP server stopping...
+SMTP server stopped.
+TLS mode: ImplicitTls
+Using existing self-signed certificate with subject name JMYAMLPC and expiry date 08/04/2034 20:00:00
+Ensure that the hostname you enter into clients and 'JMYAMLPC' from ServerOptions:HostName configuration match exactly and trust the issuer certificate at C:\Users\JMYAML\AppData\Roaming\smtp4dev\selfsigned-certificate.cer in your client/OS to avoid certificate validation errors.
+SMTP Server is listening on port 25.
+Keeping last 100 messages and 100 sessions.
+Session started. Client address 127.0.0.1.
+Session completed. Client address 127.0.0.1. Number of messages 0.
+ServerOptions changed. Restarting server...
+SMTP server stopping...
+SMTP server stopped.
+TLS mode: StartTls
+IMAP Server is listening on port 143
+Using existing self-signed certificate with subject name JMYAMLPC and expiry date 08/04/2034 20:00:00
+Ensure that the hostname you enter into clients and 'JMYAMLPC' from ServerOptions:HostName configuration match exactly and trust the issuer certificate at C:\Users\JMYAML\AppData\Roaming\smtp4dev\selfsigned-certificate.cer in your client/OS to avoid certificate validation errors.
+SMTP Server is listening on port 25.
+Keeping last 100 messages and 100 sessions.
+IMAP Server is listening on port 143
+ServerOptions changed. Restarting server...
+SMTP server stopping...
+SMTP server stopped.
+TLS mode: None
+SMTP Server is listening on port 25.
+Keeping last 100 messages and 100 sessions.
+IMAP Server is listening on port 143
+ServerOptions changed. Restarting server...
+SMTP server stopping...
+SMTP server stopped.
+TLS mode: StartTls
+IMAP Server is listening on port 143
+Using existing self-signed certificate with subject name JMYAMLPC and expiry date 08/04/2034 20:00:00
+Ensure that the hostname you enter into clients and 'JMYAMLPC' from ServerOptions:HostName configuration match exactly and trust the issuer certificate at C:\Users\JMYAML\AppData\Roaming\smtp4dev\selfsigned-certificate.cer in your client/OS to avoid certificate validation errors.
+SMTP Server is listening on port 25.
+Keeping last 100 messages and 100 sessions.
+ServerOptions changed. Restarting server...
+SMTP server stopping...
+SMTP server stopped.
+TLS mode: StartTls
+IMAP Server is listening on port 143
+Using existing self-signed certificate with subject name JMYAMLPC and expiry date 08/04/2034 20:00:00
+Ensure that the hostname you enter into clients and 'JMYAMLPC' from ServerOptions:HostName configuration match exactly and trust the issuer certificate at C:\Users\JMYAML\AppData\Roaming\smtp4dev\selfsigned-certificate.cer in your client/OS to avoid certificate validation errors.
+SMTP Server is listening on port 25.
+Keeping last 100 messages and 100 sessions.
+Session started. Client address 127.0.0.1.
+Message received. Client address 127.0.0.1, From mi_correo@example.com, To example1@example.com, example2@example.com, SecureConnection: True.
+Processing received message
+Processing received message DONE
+Session completed. Client address 127.0.0.1. Number of messages 1.
+Session started. Client address 127.0.0.1.
+Message received. Client address 127.0.0.1, From mi_correo@example.com, To example1@example.com, example2@example.com, SecureConnection: True.
+Processing received message
+Processing received message DONE
+Session completed. Client address 127.0.0.1. Number of messages 1.

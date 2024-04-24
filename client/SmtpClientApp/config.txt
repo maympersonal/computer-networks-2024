@@ -1,0 +1,11 @@
+# Configuraciones de servidores SMTP
+# Dirección IP; Puerto; Usuario; Contraseña; * para el servidor por defecto
+
+# Servidor por defecto
+127.0.0.1; 25; mi_correo@example.com; contrasena; mi_correo@example.com; 
+
+# Otros servidores
+#10.0.0.1; 587; admin@example.com; admin123;
+sandbox.smtp.mailtrap.io; 587; dfbbf1e65076b0; ee9cdf4a0a3650; mi_correo@example.com; # viejo
+sandbox.smtp.mailtrap.io; 587; cd77d5489b3067; 175dffa379c985; mi_correo@example.com; *
+192.168.1.104; 25; mi_correo@example.com; mi_contraseña; mi_correo@example.com; 

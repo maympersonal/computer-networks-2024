@@ -16,20 +16,24 @@ namespace SmtpServerApp
     {
         private ServerSMTP _server; // Declaración de un objeto de la clase ServerSMTP para manejar el servidor SMTP
         private Thread _serverThread; // Declaración de un hilo para ejecutar el servidor SMTP en segundo plano
+        Viewer viewer;
+
 
         #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public MainForm()
         #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
-            InitializeComponent(); // Inicialización de los componentes del formulario
+            InitializeComponent(); // Inicialización de los componentes del formulario         
+            viewer = new Viewer(txtStatus);
+           
         }
 
         // Método para manejar el evento Click del botón "Start"
         private void btnStart_Click(object sender, EventArgs e)
         {
             if (_server == null || !_server.running) // Verificar si el servidor no está iniciado o no se está ejecutando
-            {
-                _server = new ServerSMTP(txtServerName.Text, txtServerIP.Text, int.Parse(txtPort.Text), txtStatus); // Crear una nueva instancia del servidor SMTP
+            {              
+                _server = new ServerSMTP(txtServerName.Text, txtServerIP.Text, int.Parse(txtPort.Text), viewer); // Crear una nueva instancia del servidor SMTP
                 _serverThread = new Thread(new ThreadStart(_server.Start)); // Crear un nuevo hilo para ejecutar el servidor SMTP
                 _serverThread.Start(); // Iniciar el hilo
                 UpdateStatus("SMTP server started."); // Actualizar el estado en el cuadro de texto
@@ -59,6 +63,13 @@ namespace SmtpServerApp
         private void UpdateStatus(string format, params object[] args)
         {
             txtStatus.AppendText(string.Format(format, args) + Environment.NewLine); // Agregar un texto al cuadro de texto de status
+        }
+
+        protected override void OnClosed(EventArgs e) // Método que se ejecuta cuando se cierra el formulario
+        {
+            _server.Stop(); // Detener el servidor SMTP
+            _serverThread.Join(); // Esperar a que el hilo del servidor termine su ejecución
+            base.OnClosed(e); // Llama al método base OnClosed
         }
     }
 }
